@@ -120,11 +120,11 @@ public class BaseActor extends Group {
      */
     public void setAnimation(Animation<TextureRegion> animation) {
         this.animation = animation;
-        TextureRegion tr = this.animation.getKeyFrame(0);
-        float w = tr.getRegionWidth();
-        float h = tr.getRegionHeight();
-        setSize(w, h);
-        setOrigin(w / 2, h / 2);
+        TextureRegion textureRegion = this.animation.getKeyFrame(0);
+        float regionWidth = textureRegion.getRegionWidth();
+        float regionHeight = textureRegion.getRegionHeight();
+        setSize(regionWidth, regionHeight);
+        setOrigin(regionWidth / 2, regionHeight / 2);
 
         if (boundaryPolygon == null)
             setBoundaryRectangle();
@@ -149,25 +149,24 @@ public class BaseActor extends Group {
             textureArray.add(new TextureRegion(texture));
         }
 
-        Animation<TextureRegion> anim = new Animation<>(frameDuration, textureArray);
+        Animation<TextureRegion> animation = new Animation<>(frameDuration, textureArray);
+        animation.setPlayMode(Animation.PlayMode.NORMAL);
 
         if (loop)
-            anim.setPlayMode(Animation.PlayMode.LOOP);
-        else
-            anim.setPlayMode(Animation.PlayMode.NORMAL);
+            animation.setPlayMode(Animation.PlayMode.LOOP);
 
-        if (animation == null)
-            setAnimation(anim);
+        if (this.animation == null)
+            setAnimation(animation);
 
-        return anim;
+        return animation;
     }
 
     /**
-     * Creates an animation from a spritesheet: a rectangular grid of images stored in a single file.
+     * Creates an animation from a sprite-sheet: a rectangular grid of images stored in a single file.
      *
-     * @param fileName      name of file containing spritesheet
-     * @param rows          number of rows of images in spritesheet
-     * @param cols          number of columns of images in spritesheet
+     * @param fileName      name of file containing sprite-sheet
+     * @param rows          number of rows of images in sprite-sheet
+     * @param cols          number of columns of images in sprite-sheet
      * @param frameDuration how long each frame should be displayed
      * @param loop          should the animation loop
      * @return animation created (useful for storing multiple animations)
@@ -180,23 +179,22 @@ public class BaseActor extends Group {
 
         TextureRegion[][] temp = TextureRegion.split(texture, frameWidth, frameHeight);
 
-        Array<TextureRegion> textureArray = new Array<TextureRegion>();
+        Array<TextureRegion> textureArray = new Array<>();
 
         for (int r = 0; r < rows; r++)
             for (int c = 0; c < cols; c++)
                 textureArray.add(temp[r][c]);
 
-        Animation<TextureRegion> anim = new Animation<TextureRegion>(frameDuration, textureArray);
+        Animation<TextureRegion> animation = new Animation<>(frameDuration, textureArray);
+        animation.setPlayMode(Animation.PlayMode.NORMAL);
 
         if (loop)
-            anim.setPlayMode(Animation.PlayMode.LOOP);
-        else
-            anim.setPlayMode(Animation.PlayMode.NORMAL);
+            animation.setPlayMode(Animation.PlayMode.LOOP);
 
-        if (animation == null)
-            setAnimation(anim);
+        if (this.animation == null)
+            setAnimation(animation);
 
-        return anim;
+        return animation;
     }
 
     /**
