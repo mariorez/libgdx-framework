@@ -238,8 +238,9 @@ public class BaseActor extends Group {
     public void setOpacity(float opacity) {
         this.getColor().a = opacity;
     }
+
     // ----------------------------------------------
-    // physics/motion methods
+    // Physics/Motion methods
     // ----------------------------------------------
 
     /**
@@ -309,7 +310,7 @@ public class BaseActor extends Group {
      * @param angle of motion (degrees)
      */
     public void setMotionAngle(float angle) {
-        velocityVec.setAngle(angle);
+        velocityVec.setAngleDeg(angle);
     }
 
     /**
