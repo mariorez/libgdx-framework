@@ -38,13 +38,12 @@ public abstract class BaseGame extends Game {
      * after Gdx.input and other objects have been initialized.
      */
     public void create() {
+
         // prepare for multiple classes/stages/actors to receive discrete input
-        InputMultiplexer im = new InputMultiplexer();
-        Gdx.input.setInputProcessor(im);
+        Gdx.input.setInputProcessor(new InputMultiplexer());
 
         // parameters for generating a custom bitmap font
-        FreeTypeFontGenerator fontGenerator =
-                new FreeTypeFontGenerator(Gdx.files.internal("OpenSans.ttf"));
+        FreeTypeFontGenerator fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("OpenSans.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter fontParameters = new FreeTypeFontGenerator.FreeTypeFontParameter();
         fontParameters.size = 36;
         fontParameters.color = Color.WHITE;

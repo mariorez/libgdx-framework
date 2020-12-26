@@ -116,11 +116,11 @@ public class BaseActor extends Group {
     /**
      * Sets the animation used when rendering this actor; also sets actor size.
      *
-     * @param anim animation that will be drawn when actor is rendered
+     * @param animation animation that will be drawn when actor is rendered
      */
-    public void setAnimation(Animation<TextureRegion> anim) {
-        animation = anim;
-        TextureRegion tr = animation.getKeyFrame(0);
+    public void setAnimation(Animation<TextureRegion> animation) {
+        this.animation = animation;
+        TextureRegion tr = this.animation.getKeyFrame(0);
         float w = tr.getRegionWidth();
         float h = tr.getRegionHeight();
         setSize(w, h);
@@ -246,29 +246,29 @@ public class BaseActor extends Group {
     /**
      * Set acceleration of this object.
      *
-     * @param acc Acceleration in (pixels/second) per second.
+     * @param acceleration Acceleration in (pixels/second) per second.
      */
-    public void setAcceleration(float acc) {
-        acceleration = acc;
+    public void setAcceleration(float acceleration) {
+        this.acceleration = acceleration;
     }
 
     /**
      * Set deceleration of this object.
      * Deceleration is only applied when object is not accelerating.
      *
-     * @param dec Deceleration in (pixels/second) per second.
+     * @param deceleration Deceleration in (pixels/second) per second.
      */
-    public void setDeceleration(float dec) {
-        deceleration = dec;
+    public void setDeceleration(float deceleration) {
+        this.deceleration = deceleration;
     }
 
     /**
      * Set maximum speed of this object.
      *
-     * @param ms Maximum speed of this object in (pixels/second).
+     * @param maxSpeed Maximum speed of this object in (pixels/second).
      */
-    public void setMaxSpeed(float ms) {
-        maxSpeed = ms;
+    public void setMaxSpeed(float maxSpeed) {
+        this.maxSpeed = maxSpeed;
     }
 
     /**
@@ -355,20 +355,20 @@ public class BaseActor extends Group {
      * Speed is limited by maxSpeed value. <br>
      * Acceleration vector reset to (0,0) at end of method. <br>
      *
-     * @param dt Time elapsed since previous frame (delta time); typically obtained from <code>act</code> method.
+     * @param deltaTime Time elapsed since previous frame (delta time); typically obtained from <code>act</code> method.
      * @see #acceleration
      * @see #deceleration
      * @see #maxSpeed
      */
-    public void applyPhysics(float dt) {
+    public void applyPhysics(float deltaTime) {
         // apply acceleration
-        velocityVec.add(accelerationVec.x * dt, accelerationVec.y * dt);
+        velocityVec.add(accelerationVec.x * deltaTime, accelerationVec.y * deltaTime);
 
         float speed = getSpeed();
 
         // decrease speed (decelerate) when not accelerating
         if (accelerationVec.len() == 0)
-            speed -= deceleration * dt;
+            speed -= deceleration * deltaTime;
 
         // keep speed within set bounds
         speed = MathUtils.clamp(speed, 0, maxSpeed);
@@ -377,7 +377,7 @@ public class BaseActor extends Group {
         setSpeed(speed);
 
         // update position according to value stored in velocity vector
-        moveBy(velocityVec.x * dt, velocityVec.y * dt);
+        moveBy(velocityVec.x * deltaTime, velocityVec.y * deltaTime);
 
         // reset acceleration
         accelerationVec.set(0, 0);
@@ -448,14 +448,14 @@ public class BaseActor extends Group {
      * @see #setBoundaryPolygon
      */
     public boolean overlaps(BaseActor other) {
-        Polygon poly1 = this.getBoundaryPolygon();
-        Polygon poly2 = other.getBoundaryPolygon();
+        Polygon currentPoly = this.getBoundaryPolygon();
+        Polygon otherPoly = other.getBoundaryPolygon();
 
         // initial test to improve performance
-        if (!poly1.getBoundingRectangle().overlaps(poly2.getBoundingRectangle()))
+        if (!currentPoly.getBoundingRectangle().overlaps(otherPoly.getBoundingRectangle()))
             return false;
 
-        return Intersector.overlapConvexPolygons(poly1, poly2);
+        return Intersector.overlapConvexPolygons(currentPoly, otherPoly);
     }
 
     /**
@@ -467,15 +467,15 @@ public class BaseActor extends Group {
      * @return direction vector by which actor was translated, null if no overlap
      */
     public Vector2 preventOverlap(BaseActor other) {
-        Polygon poly1 = this.getBoundaryPolygon();
-        Polygon poly2 = other.getBoundaryPolygon();
+        Polygon currentPoly = this.getBoundaryPolygon();
+        Polygon otherPoly = other.getBoundaryPolygon();
 
         // initial test to improve performance
-        if (!poly1.getBoundingRectangle().overlaps(poly2.getBoundingRectangle()))
+        if (!currentPoly.getBoundingRectangle().overlaps(otherPoly.getBoundingRectangle()))
             return null;
 
         MinimumTranslationVector mtv = new MinimumTranslationVector();
-        boolean polygonOverlap = Intersector.overlapConvexPolygons(poly1, poly2, mtv);
+        boolean polygonOverlap = Intersector.overlapConvexPolygons(currentPoly, otherPoly, mtv);
 
         if (!polygonOverlap)
             return null;
@@ -494,18 +494,18 @@ public class BaseActor extends Group {
      * @see #setBoundaryPolygon
      */
     public boolean isWithinDistance(float distance, BaseActor other) {
-        Polygon poly1 = this.getBoundaryPolygon();
+        Polygon currentPoly = this.getBoundaryPolygon();
         float scaleX = (this.getWidth() + 2 * distance) / this.getWidth();
         float scaleY = (this.getHeight() + 2 * distance) / this.getHeight();
-        poly1.setScale(scaleX, scaleY);
+        currentPoly.setScale(scaleX, scaleY);
 
-        Polygon poly2 = other.getBoundaryPolygon();
+        Polygon otherPoly = other.getBoundaryPolygon();
 
         // initial test to improve performance
-        if (!poly1.getBoundingRectangle().overlaps(poly2.getBoundingRectangle()))
+        if (!currentPoly.getBoundingRectangle().overlaps(otherPoly.getBoundingRectangle()))
             return false;
 
-        return Intersector.overlapConvexPolygons(poly1, poly2);
+        return Intersector.overlapConvexPolygons(currentPoly, otherPoly);
     }
 
     /**
@@ -523,8 +523,8 @@ public class BaseActor extends Group {
      *
      * @param BaseActor whose size determines the world bounds (typically a background image)
      */
-    public static void setWorldBounds(BaseActor ba) {
-        setWorldBounds(ba.getWidth(), ba.getHeight());
+    public static void setWorldBounds(BaseActor referenceActor) {
+        setWorldBounds(referenceActor.getWidth(), referenceActor.getHeight());
     }
 
     /**
@@ -620,13 +620,13 @@ public class BaseActor extends Group {
      * Processes all Actions and related code for this object;
      * automatically called by act method in Stage class.
      *
-     * @param dt elapsed time (second) since last frame (supplied by Stage act method)
+     * @param deltaTime elapsed time (second) since last frame (supplied by Stage act method)
      */
-    public void act(float dt) {
-        super.act(dt);
+    public void act(float deltaTime) {
+        super.act(deltaTime);
 
         if (!animationPaused)
-            elapsedTime += dt;
+            elapsedTime += deltaTime;
     }
 
     /**
