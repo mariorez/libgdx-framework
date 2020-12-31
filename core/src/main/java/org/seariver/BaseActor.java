@@ -48,13 +48,13 @@ public class BaseActor extends Group {
     // stores size of game world for all actors
     private static Rectangle worldBounds;
 
-    public BaseActor(float x, float y, Stage s) {
+    public BaseActor(float x, float y, Stage stage) {
         // call constructor from Actor class
         super();
 
         // perform additional initialization tasks
         setPosition(x, y);
-        s.addActor(this);
+        stage.addActor(this);
 
         // initialize animation data
         animation = null;
