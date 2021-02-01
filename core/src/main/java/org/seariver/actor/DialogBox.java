@@ -12,8 +12,8 @@ public class DialogBox extends BaseActor {
     private Label dialogLabel;
     private float padding = 16;
 
-    public DialogBox(float x, float y, Stage s) {
-        super(x, y, s);
+    public DialogBox(float x, float y, Stage stage) {
+        super(x, y, stage);
         loadTexture("dialog-translucent.png");
 
         dialogLabel = new Label(" ", BaseGame.labelStyle);
