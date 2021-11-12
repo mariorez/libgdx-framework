@@ -145,8 +145,7 @@ public class BaseActor extends Group {
         int fileCount = fileNames.length;
         Array<TextureRegion> textureArray = new Array<>();
 
-        for (int n = 0; n < fileCount; n++) {
-            String fileName = fileNames[n];
+        for (String fileName : fileNames) {
             Texture texture = new Texture(Gdx.files.internal(fileName));
             texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
             textureArray.add(new TextureRegion(texture));
@@ -225,19 +224,10 @@ public class BaseActor extends Group {
      * Checks if animation is complete: if play mode is normal (not looping)
      * and elapsed time is greater than time corresponding to last frame.
      *
-     * @return
+     * @return boolean
      */
     public boolean isAnimationFinished() {
         return animation.isAnimationFinished(elapsedTime);
-    }
-
-    /**
-     * Sets the opacity of this actor.
-     *
-     * @param opacity value from 0 (transparent) to 1 (opaque)
-     */
-    public void setOpacity(float opacity) {
-        this.getColor().a = opacity;
     }
 
     // ----------------------------------------------
@@ -613,7 +603,7 @@ public class BaseActor extends Group {
     }
 
     // ----------------------------------------------
-    // Actor methods: act and draw
+    // Actor methods: act, draw and etc.
     // ----------------------------------------------
 
     /**
@@ -651,5 +641,14 @@ public class BaseActor extends Group {
                     getWidth(), getHeight(), getScaleX(), getScaleY(), getRotation());
 
         super.draw(batch, parentAlpha);
+    }
+
+    /**
+     * Sets the opacity of this actor.
+     *
+     * @param opacity value from 0 (transparent) to 1 (opaque)
+     */
+    public void setOpacity(float opacity) {
+        this.getColor().a = opacity;
     }
 }
